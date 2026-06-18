@@ -195,6 +195,7 @@ async function initSupabase() {
 
 function setSyncStatus(message) {
   document.querySelector("#sync-status").textContent = message;
+  document.querySelector("#mobile-sync-label").textContent = currentUser ? `${message} · Signed in` : message;
   document.querySelector("#journal-status").textContent = currentUser ? message : "Saved locally";
 }
 
@@ -203,7 +204,26 @@ function updateAccountUi() {
   document.querySelector("#account-label").textContent = signedIn ? currentUser.email : "Not signed in";
   document.querySelector("#auth-form").hidden = signedIn;
   document.querySelector("#signout-btn").hidden = !signedIn;
+  document.querySelector("#mobile-auth-open").setAttribute("aria-label", signedIn ? "Open sync account panel" : "Open sign in and sync panel");
   setSyncStatus(signedIn ? "Synced" : "Local mode");
+}
+
+function openMobileAuth() {
+  document.querySelector(".account-panel").classList.add("is-open");
+  document.querySelector("#mobile-auth-backdrop").hidden = false;
+  document.querySelector("#mobile-auth-backdrop").classList.add("is-open");
+  document.querySelector("#mobile-auth-open").setAttribute("aria-expanded", "true");
+  window.setTimeout(() => {
+    const target = currentUser ? document.querySelector("#signout-btn") : document.querySelector("#auth-email");
+    target?.focus();
+  }, 0);
+}
+
+function closeMobileAuth() {
+  document.querySelector(".account-panel").classList.remove("is-open");
+  document.querySelector("#mobile-auth-backdrop").classList.remove("is-open");
+  document.querySelector("#mobile-auth-backdrop").hidden = true;
+  document.querySelector("#mobile-auth-open").setAttribute("aria-expanded", "false");
 }
 
 function calculateScore(source = state) {
@@ -737,6 +757,12 @@ document.querySelector("#add-routine-btn").addEventListener("click", () => docum
 document.querySelector("#add-task-btn").addEventListener("click", () => document.querySelector("#task-input").focus());
 document.querySelector("#add-habit-btn").addEventListener("click", () => document.querySelector("#habit-input").focus());
 document.querySelector("#new-goal-btn").addEventListener("click", () => document.querySelector("#goal-title").focus());
+document.querySelector("#mobile-auth-open").addEventListener("click", openMobileAuth);
+document.querySelector("#mobile-auth-close").addEventListener("click", closeMobileAuth);
+document.querySelector("#mobile-auth-backdrop").addEventListener("click", closeMobileAuth);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeMobileAuth();
+});
 
 document.querySelector("#auth-form").addEventListener("submit", async (event) => {
   event.preventDefault();
