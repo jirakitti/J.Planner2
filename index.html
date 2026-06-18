@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101411" />
+    <meta name="description" content="A personal operating system for daily discipline, planning, habits, goals, and study-abroad preparation." />
+    <title>Personal Operating System</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="side-rail" aria-label="Application navigation">
+        <div class="brand">
+          <span class="brand-mark">OS</span>
+          <div>
+            <strong>Personal OS</strong>
+            <span id="current-date">Today</span>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <button class="nav-item is-active" data-view="dashboard" aria-label="Dashboard">
+            <span class="nav-icon">⌁</span>
+            <span>Command</span>
+          </button>
+          <button class="nav-item" data-view="planner" aria-label="Planner">
+            <span class="nav-icon">☷</span>
+            <span>Execute</span>
+          </button>
+          <button class="nav-item" data-view="habits" aria-label="Habits">
+            <span class="nav-icon">◩</span>
+            <span>Discipline</span>
+          </button>
+          <button class="nav-item" data-view="calendar" aria-label="Calendar">
+            <span class="nav-icon">◫</span>
+            <span>Calendar</span>
+          </button>
+          <button class="nav-item" data-view="vision" aria-label="Vision board">
+            <span class="nav-icon">◇</span>
+            <span>Vision</span>
+          </button>
+        </nav>
+
+        <div class="rail-status">
+          <span>System</span>
+          <strong id="rail-score">0%</strong>
+        </div>
+
+        <section class="account-panel" aria-label="Account and sync">
+          <div class="account-state">
+            <span id="sync-status">Local mode</span>
+            <strong id="account-label">Not signed in</strong>
+          </div>
+          <form id="auth-form" class="auth-form">
+            <input id="auth-email" type="email" autocomplete="email" placeholder="Email" aria-label="Email" />
+            <input id="auth-password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password" />
+            <div class="auth-actions">
+              <button type="submit">Sign In</button>
+              <button id="signup-btn" type="button">Create</button>
+            </div>
+          </form>
+          <button id="signout-btn" class="ghost-button account-signout" type="button" hidden>Sign Out</button>
+        </section>
+      </aside>
+
+      <main class="main-panel">
+        <section class="countdown-strip" aria-label="Countdown to study abroad milestone">
+          <div>
+            <p class="eyebrow">Target Milestone: 22 Dec 2026</p>
+            <h2>Critical Path Countdown</h2>
+            <span>Use today. Do the list. Become ready before the flight.</span>
+          </div>
+          <div class="countdown-metrics">
+            <div>
+              <strong id="countdown-days">0</strong>
+              <span>Total Days</span>
+            </div>
+            <div>
+              <strong id="countdown-split">0 mo, 0 days</strong>
+              <span>Relative Split</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="view is-visible" id="dashboard-view" aria-labelledby="dashboard-title">
+          <header class="page-header">
+            <div>
+              <p class="eyebrow">Command Center</p>
+              <h1 id="dashboard-title">Run today with intent.</h1>
+            </div>
+            <button class="ghost-button" id="reset-day-btn" type="button">Reset Today</button>
+          </header>
+
+          <div class="dashboard-grid">
+            <section class="battery-panel" aria-label="Energy productivity score">
+              <div class="battery-topline">
+                <span>Energy / Productivity Battery</span>
+                <strong id="battery-label">0%</strong>
+              </div>
+              <div class="battery-body">
+                <div class="battery-fill" id="battery-fill"></div>
+                <div class="battery-glow"></div>
+              </div>
+              <div class="score-breakdown">
+                <div>
+                  <span>Fixed</span>
+                  <strong id="fixed-stat">0/0</strong>
+                </div>
+                <div>
+                  <span>Tasks</span>
+                  <strong id="task-stat">0/0</strong>
+                </div>
+                <div>
+                  <span>Habits</span>
+                  <strong id="habit-stat">0/0</strong>
+                </div>
+                <div>
+                  <span>Milestones</span>
+                  <strong id="milestone-stat">0/0</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="coach-panel" aria-label="Coach advice">
+              <div class="section-title-row">
+                <p class="eyebrow">AI Coach</p>
+                <span id="coach-mode">Calibrating</span>
+              </div>
+              <p id="coach-advice">Start with one mandatory routine. Momentum needs proof, not motivation.</p>
+            </section>
+
+            <section class="focus-panel" aria-label="Today's focus">
+              <div class="section-title-row">
+                <h2>Today’s Focus</h2>
+                <span id="open-count">0 open</span>
+              </div>
+              <div id="today-focus-list" class="compact-list"></div>
+            </section>
+
+            <section class="momentum-panel" aria-label="Weekly momentum">
+              <div class="section-title-row">
+                <h2>Seven-Day Momentum</h2>
+                <span id="momentum-score">0%</span>
+              </div>
+              <div id="weekly-bars" class="weekly-bars"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="planner-view" aria-labelledby="planner-title">
+          <header class="page-header">
+            <div>
+              <p class="eyebrow">Execution Engine</p>
+              <h1 id="planner-title">Separate the mandatory from the optional.</h1>
+            </div>
+          </header>
+
+          <div class="two-column">
+            <section class="workspace-panel">
+              <div class="section-title-row">
+                <h2>Fixed Routines</h2>
+                <button class="icon-button" id="add-routine-btn" type="button" aria-label="Add routine">+</button>
+              </div>
+              <form class="quick-form" id="routine-form">
+                <input id="routine-input" type="text" maxlength="70" placeholder="Add mandatory drill..." aria-label="New fixed routine" />
+                <button type="submit">Add</button>
+              </form>
+              <div id="routine-list" class="item-list"></div>
+            </section>
+
+            <section class="workspace-panel">
+              <div class="section-title-row">
+                <h2>Custom Tasks</h2>
+                <button class="icon-button" id="add-task-btn" type="button" aria-label="Add task">+</button>
+              </div>
+              <form class="quick-form" id="task-form">
+                <input id="task-input" type="text" maxlength="80" placeholder="Add ad-hoc task..." aria-label="New custom task" />
+                <button type="submit">Add</button>
+              </form>
+              <div id="task-list" class="item-list"></div>
+            </section>
+          </div>
+
+          <section class="journal-panel">
+            <div class="section-title-row">
+              <h2>End-of-Day Reflection</h2>
+              <span id="journal-status">Saved locally</span>
+            </div>
+            <textarea id="journal-input" rows="6" placeholder="What created energy? What drained it? What is tomorrow’s first move?"></textarea>
+          </section>
+        </section>
+
+        <section class="view" id="habits-view" aria-labelledby="habits-title">
+          <header class="page-header">
+            <div>
+              <p class="eyebrow">Discipline Tracker</p>
+              <h1 id="habits-title">Make momentum visible.</h1>
+            </div>
+            <button class="solid-button" id="add-habit-btn" type="button">New Habit</button>
+          </header>
+
+          <form class="wide-form" id="habit-form">
+            <input id="habit-input" type="text" maxlength="60" placeholder="Habit name, e.g. Deep work block" aria-label="New habit" />
+            <select id="habit-category" aria-label="Habit category">
+              <option value="Mind">Mind</option>
+              <option value="Body">Body</option>
+              <option value="Skill">Skill</option>
+              <option value="Recovery">Recovery</option>
+            </select>
+            <button type="submit">Add Habit</button>
+          </form>
+
+          <div id="habit-grid" class="habit-grid"></div>
+        </section>
+
+        <section class="view" id="calendar-view" aria-labelledby="calendar-title">
+          <header class="page-header">
+            <div>
+              <p class="eyebrow">Daily Ledger</p>
+              <h1 id="calendar-title">Track the proof, day by day.</h1>
+            </div>
+            <button class="solid-button" id="calendar-today-btn" type="button">Today</button>
+          </header>
+
+          <div class="calendar-layout">
+            <section class="calendar-panel" aria-label="Monthly discipline calendar">
+              <div class="calendar-toolbar">
+                <button class="icon-button" id="prev-month-btn" type="button" aria-label="Previous month">‹</button>
+                <h2 id="calendar-month-label">Month</h2>
+                <button class="icon-button" id="next-month-btn" type="button" aria-label="Next month">›</button>
+              </div>
+              <div class="calendar-weekdays" aria-hidden="true">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span>Sun</span>
+              </div>
+              <div id="calendar-grid" class="calendar-grid"></div>
+            </section>
+
+            <aside class="day-panel" aria-label="Selected day details">
+              <div class="section-title-row">
+                <h2 id="selected-day-label">Selected day</h2>
+                <span id="selected-day-score">0%</span>
+              </div>
+
+              <section class="day-section">
+                <h3>Habits</h3>
+                <div id="calendar-habit-list" class="day-check-list"></div>
+              </section>
+
+              <section class="day-section">
+                <h3>Daily Note</h3>
+                <textarea id="calendar-note" rows="5" placeholder="What happened today? What must not be forgotten?"></textarea>
+              </section>
+
+              <section class="day-section">
+                <h3>Custom Tasks</h3>
+                <form class="quick-form" id="calendar-task-form">
+                  <input id="calendar-task-input" type="text" maxlength="80" placeholder="Add task for this date..." aria-label="Calendar task" />
+                  <button type="submit">Add</button>
+                </form>
+                <div id="calendar-task-list" class="item-list"></div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="vision-view" aria-labelledby="vision-title">
+          <header class="page-header">
+            <div>
+              <p class="eyebrow">Vision Board</p>
+              <h1 id="vision-title">Turn macro-goals into next actions.</h1>
+            </div>
+            <button class="solid-button" id="new-goal-btn" type="button">New Goal</button>
+          </header>
+
+          <form class="goal-form" id="goal-form">
+            <input id="goal-title" type="text" maxlength="80" placeholder="Macro-goal title" aria-label="Goal title" />
+            <select id="goal-area" aria-label="Life area">
+              <option value="Growth">Growth</option>
+              <option value="Career">Career</option>
+              <option value="Wealth">Wealth</option>
+              <option value="Health">Health</option>
+              <option value="Relationships">Relationships</option>
+            </select>
+            <input id="goal-date" type="date" aria-label="Target date" />
+            <input id="goal-milestone" type="text" maxlength="70" placeholder="First milestone" aria-label="First milestone" />
+            <button type="submit">Create</button>
+          </form>
+
+          <div id="goal-board" class="goal-board"></div>
+        </section>
+      </main>
+    </div>
+
+    <template id="item-template">
+      <article class="check-item">
+        <label>
+          <input type="checkbox" />
+          <span class="custom-check"></span>
+          <span class="item-title"></span>
+        </label>
+        <button type="button" class="delete-button" aria-label="Delete">×</button>
+      </article>
+    </template>
+
+    <script src="./supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
